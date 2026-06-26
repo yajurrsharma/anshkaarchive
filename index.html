@@ -1,0 +1,410 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Gallery</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+
+        <div id="theater-curtain">
+            <div class="curtain-wing left-wing"></div>
+            <div class="curtain-wing right-wing"></div>
+        </div>
+
+        <div id="landing-screen" class="screen visible">
+            <div class="landing-container">
+                <h1 class="gallery-title">Your Archive</h1>
+                <p class="gallery-subtext"><br>You are allowed to touch.<br></p>
+                
+                <div class="ticket-form">
+                    <input type="text" id="ticket-id" placeholder="What do you most like?" autocomplete="off">
+                    <button id="enter-btn">Enter The Gallery →</button>
+                </div>
+                
+                <p id="error-message" class="error-hidden">Ticket ID toh batao.</p>
+            </div>
+        </div>
+
+        <div id="portals-screen" class="screen">
+            <div class="portals-container">
+                
+                <div class="portal-card" onclick="enterLibrary()">
+                    <div class="portal-box">
+                        <div class="door-frame">
+                            <div class="door-panel">
+                                <div class="door-knob"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="portal-label">THE LIBRARY</h2>
+                </div>
+
+                <div class="portal-card" onclick="enterGreatHall()">
+                    <div class="portal-box">
+                        <div class="door-frame">
+                            <div class="door-panel">
+                                <div class="door-knob"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="portal-label">THE MONA LISA</h2>
+                </div>
+
+                <div class="portal-card" onclick="enterAphroditeWing()">
+                    <div class="portal-box">
+                        <div class="door-frame">
+                            <div class="door-panel">
+                                <div class="door-knob"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="portal-label">APHRODITE WING</h2>
+                </div>
+
+            </div>
+        </div>
+
+    <div id="great-hall-screen" class="screen">
+            <div class="great-hall-wrapper">
+                <div class="great-hall-container">
+                    
+                    <div class="action-sidebar">
+                        <button id="assemble-btn" onclick="assembleMosaicWithCurtains()">What the hell →</button>
+                    </div>
+                    
+                    <div id="mosaic-grid" class="mosaic-grid"></div>
+                    
+                </div>
+            </div>
+        </div>
+
+    <div id="library-screen" class="screen">
+        <div class="library-wrapper">
+            <div id="books-container" class="bookshelf">
+                </div>
+        </div>
+    </div>
+            
+    <div id="letter-overlay" class="letter-overlay" onclick="if(event.target === this) closeLetter()">
+        <div class="book-container">
+            <div class="book-page" id="page-left"></div>
+            <div class="book-page" id="page-right"></div>
+            
+            <div class="nav-container">
+                <button onclick="changePage(-2)">‹</button>
+                <button onclick="changePage(2)">›</button>
+            </div>
+        </div>
+    </div>
+    <div id="aphrodite-screen" class="screen">
+            <div class="aphrodite-wrapper">
+                
+                <div class="exhibit-stage">
+                    <div id="pedestal-pillar" class="pedestal-pillar">
+                        
+                        <div class="carousel-frame">
+                            <div id="carousel-track" class="carousel-track">
+                                </div>
+                            
+                            <button class="nav-arrow prev-arrow" onclick="moveCarousel(-1)">‹</button>
+                            <button class="nav-arrow next-arrow" onclick="moveCarousel(1)">›</button>
+                        </div>
+                        
+                        <div class="pedestal-cap"></div>
+                        <div class="pedestal-shaft">
+        <div class="gallery-week-indicator">You're an artpiece nobody can recreate. You're the <b>constellation</b> everybody yearns to see.</b> You're the <b>Aurora</b> that is loved by everyone. You're my <b>Golden Record</b>, my love.
+            
+        </div>
+    </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+    <script>
+        const validCodes = ['CATS', 'BOOKS'];
+        
+        document.getElementById('enter-btn').addEventListener('click', function() {
+            const inputCode = document.getElementById('ticket-id').value.trim().toUpperCase();
+            const errorMessage = document.getElementById('error-message');
+            
+            if (validCodes.includes(inputCode)) {
+                document.getElementById('landing-screen').classList.remove('visible');
+                setTimeout(() => {
+                    document.getElementById('portals-screen').classList.add('visible');
+                    
+                    const cards = document.querySelectorAll('.portal-card');
+                    cards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('reveal');
+                        }, index * 1000);
+                    });
+                }, 500); 
+            } else {
+                errorMessage.className = "error-visible";
+            }
+        });
+
+        function enterGreatHall() {
+            document.getElementById('portals-screen').classList.remove('visible');
+            
+            setTimeout(() => {
+                document.getElementById('great-hall-screen').classList.add('visible');
+                
+                const grid = document.getElementById('mosaic-grid');
+                grid.innerHTML = ''; 
+                grid.classList.remove('reveal-portrait'); 
+                
+                const sessionPhotos = [];
+                for (let i = 1; i <= 304; i++) {
+                    sessionPhotos.push(i);
+                }
+                
+                sessionPhotos.sort(() => Math.random() - 0.5);
+                
+                let index = 0;
+                const targetCount = 304;
+                
+                const waterfall = setInterval(() => {
+                    if (index >= targetCount) {
+                        clearInterval(waterfall);
+                        setTimeout(() => {
+                            document.getElementById('assemble-btn').classList.add('show');
+                        }, 500);
+                        return;
+                    }
+
+                    const photoNumber = sessionPhotos[index];
+                    const img = document.createElement('img');
+                    img.className = 'mosaic-tile';
+                    img.alt = `Memory ${photoNumber}`;
+                    
+                    img.loading = "lazy";
+                    img.decoding = "async";
+
+                    const randomX = (Math.random() * 120 - 60) + 'px';
+                    const randomY = (Math.random() * 120 - 60) + 'px';
+                    const randomRot = (Math.random() * 90 - 45) + 'deg';
+                    
+                    img.style.setProperty('--x', randomX);
+                    img.style.setProperty('--y', randomY);
+                    img.style.setProperty('--r', randomRot);
+                    
+                    grid.appendChild(img);
+
+                    img.src = `archive/photo (${photoNumber}).jpg`;
+                    
+                    setTimeout(() => {
+                        img.classList.add('scattered');
+                    }, 10);
+
+                    index++;
+                }, 25); 
+
+            }, 500);
+        }
+
+        function assembleMosaicWithCurtains() {
+            const curtain = document.getElementById('theater-curtain');
+            const btn = document.getElementById('assemble-btn');
+            const grid = document.getElementById('mosaic-grid');
+            const tiles = document.querySelectorAll('.mosaic-tile');
+
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+            curtain.classList.add('closed');
+
+            setTimeout(() => {
+                tiles.forEach(tile => {
+                    tile.classList.remove('scattered');
+                    tile.classList.add('assembled');
+                });
+                grid.classList.add('reveal-portrait');
+            }, 1000); 
+
+            setTimeout(() => {
+                curtain.classList.remove('closed');
+            }, 2500);
+        }
+
+    function enterAphroditeWing() {
+        document.getElementById('portals-screen').classList.remove('visible');
+        
+        setTimeout(() => {
+            document.getElementById('aphrodite-screen').classList.add('visible');
+            
+            setTimeout(() => {
+                document.getElementById('pedestal-pillar').classList.add('rise');
+            }, 1500);
+            
+            loadAphroditeGallery();
+        }, 500);
+        }
+
+    let currentAphroditeIndex = 0;
+
+    function loadAphroditeGallery() {
+        const track = document.getElementById('carousel-track');
+        track.innerHTML = ''; 
+        currentAphroditeIndex = 0;
+
+        let allPhotos = Array.from({length: 86}, (_, i) => i + 1);
+        
+        allPhotos.sort(() => Math.random() - 0.5);
+        allPhotos.slice(0, 85).forEach(num => {
+            const img = document.createElement('img');
+            img.className = 'carousel-slide';
+            img.src = `aphrodite/photo${num}.jpg`; 
+            track.appendChild(img);
+        });
+    }
+
+    function moveCarousel(direction) {
+        const track = document.getElementById('carousel-track');
+        const slides = document.querySelectorAll('.carousel-slide');
+        
+        currentAphroditeIndex += direction;
+
+        if (currentAphroditeIndex < 0) currentAphroditeIndex = slides.length - 1;
+        if (currentAphroditeIndex >= slides.length) currentAphroditeIndex = 0;
+
+        const moveAmount = -currentAphroditeIndex * 100;
+        track.style.transform = `translateX(${moveAmount}%) rotateX(5deg)`;
+    }
+
+    function enterLibrary() {
+        document.getElementById('portals-screen').classList.remove('visible');
+        setTimeout(() => {
+            document.getElementById('library-screen').classList.add('visible');
+            const container = document.getElementById('books-container');
+            container.innerHTML = '';
+            
+            function createShelf(count, category) {
+                container.style.display = 'flex';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'flex-end';
+                container.style.flexWrap = 'wrap';
+
+                for(let i = 0; i < count; i++) {
+                    const book = document.createElement('div');
+                    book.className = 'book';
+                    
+                    book.style.height = (150 + Math.random() * 30) + 'px';
+                    book.style.width = '40px'; 
+                    
+                    const tilt = (Math.random() * 10 - 5);
+                    book.style.transform = `rotate(${tilt}deg)`;
+                    
+                    // Generate a random vibrant color for each book
+                    const randomColor = `hsl(${Math.floor(Math.random() * 360)}, 60%, 50%)`;
+                    book.style.backgroundColor = randomColor;
+                    
+                    book.onclick = () => openLetter(i + 1, category);
+                    container.appendChild(book);
+                }
+            }
+
+            createShelf(9, 'works');
+        }, 500);
+    }
+
+    function openLetter(num, category) {
+        const overlay = document.getElementById('letter-overlay');
+        const img = document.getElementById('letter-image');
+        img.src = `library/${category}/msg (${num}).jpg`; 
+        overlay.style.display = 'flex';
+    }
+    function closeLetter() {
+        document.getElementById('letter-overlay').style.display = 'none';
+    }
+
+
+    let currentPages = []; 
+    let currentPageIndex = 0;
+
+    function openLetter(num, category) {
+        const overlay = document.getElementById('letter-overlay');
+        const display = document.getElementById('page-display');
+        
+        if (category === 'works') {
+            currentPages = myWritings[num - 1] || ["Page 1: Empty"];
+            currentPageIndex = 0;
+            renderPage();
+        }
+        overlay.style.display = 'flex';
+    }
+
+    function renderPage() {
+        document.getElementById('page-left').innerText = currentPages[currentPageIndex] || "";
+        document.getElementById('page-right').innerText = currentPages[currentPageIndex + 1] || "";
+    }
+
+    function changePage(direction) {
+        currentPageIndex += direction;
+        if (currentPageIndex < 0) currentPageIndex = 0;
+        if (currentPageIndex >= currentPages.length) currentPageIndex = currentPages.length - 2;
+        renderPage();
+    }
+
+    const myWritings = [
+        [
+                "When Tomorrow Comes\n\n(PEN NAME HERE)",
+                "Dia: the poet, coffee rings on notebooks, bad posture from a heavy bag, reading for hours together, dreaming of a love that makes her write till her hands give out, 'sleep is for the weak', not knowing who you are, always looking for the right word, never being able to speak up\n\nEllie: the artist, the bird in the cage, the 'ingénue', the incapable of love, shutting yourself in for days on end to finish a piece, the pretentious and the uptight, stained hands stained face stained clothes, tea, more paint than pens\n\nRo: the performer, the revolutionary, the loudest in the room, reciting shakespeare like a second language, hours spent memorizing lines, absorbing, papers everywhere, rebelling against authority, 'rules were made to be broken', wanting someone you can't have",
+                "Since 1976, Stellifer Girls' Academy has been the leading (SCRATCHED: shittiest) institution for education in the country. Housed in Alderwood Valley and founded by Sir Reagan O'Connaughan (SCRATCHED: ROBIN MILLER), its campus sprawled over 120 acres of lush greenery (SCRATCHED: old buildings), unique teaching methodology (SCRATCHED: dickwad professors) and emphasis on the arts and academia (SCRATCHED: emphasis on slutshaming its students) separate it from other educational institutes in the area.\n\n(IN RED INK) Stellifer Girls' Academy is RULED by the five most awesome young ladies to walk its halls; Robin (that's me) Miller, Vienna Ardley, Eleanor Roosevelt (SCRATCHED: Rothschild), Charlie Dawson, and Dia Ruby Joan. They're sexy, smart and legendary.\n\n(IN BLUE INK) Stop vandalizing the school brochures in the library, Ro. Lola won’t stop telling me off for it. - Vienna\n\n(IN RED INK) I'll stop vandalizing this shit when tomorrow comes.\nHOUSES:\n· LEO: For the brave, the loyal, the fierce, the performing arts [GOLD, MAROON]\n· SIRIUS: For the bright, the witty, the virtuous, the literary arts [NAVY, GREY]\n· CORVUS: For the solemn, the dedicated, the perfectionists, the visual arts [WINE, WHITE]\n· LYRA: For the problem-solvers, the collected, the patient, the musical arts [BRONZE, CREAM]\n· ARA: For the intelligent, the curious, the restless, the sciences [BROWN, GREEN]\nCURRICULUM:\n· ACADEMIC COURSES:\no English Literature\no Shakespearean Literature\no Renaissance Art & Literature\no Greek & Roman Classics\no Philosophy\no European History",
+                "o World History\no US History\no Ancient Civilisations\no Astronomy\no Forensic Science\no Anatomy and Physiology\no Botany\no Chemistry\no Physics\no Mathematics\no Geometry (Advanced)\no Latin\no French\no Greek\no Urdu\no Mandarin\no Italian\no Spanish\no Japanese\no German\no Architecture\no Film\no Cultural Studies",
+                "o Music Theory\n· SPORTS:\no Chess\no Fencing\no Polo\no Croquet\no Equestrianism\no Archery\no Tennis\no Soccer\no Figure Ice Skating\no Ballet\no Snooker\n· CLUBS:\no Society of Poetry\no Society of Literary Analysis\no Society of Debate\no Society of Cryptography\no Society of Theatrics\no Society of Astronomy\no Society of Herbology\no Society of Dance\no Society of Law",
+                "o Society of Divination\n· COMMITTEES:\no Christmas Masquerade Committee\no Student Council\no Theatrical Presentation Committee\nPLOT OUTLINE:\nIntroduction to characters\nRomeo & Juliet\n· Audition\n· Ellie meets Richard\n· Robin is cast alongside Hyewon\n· Robin and Hyewon explore a relationship\nMidterms\n· Hyewon stops talking to Robin\n· Ellie begins reciprocating Richard’s feelings\n· Dia meets Azrael, they become friends\n· Charlie flunks her midterms\n· Vienna begins feeling left out, isolates herself\nChristmas Masquerade\n· Romeo & Juliet is presented\n· Robin finds out Hyewon is dating another boy\n· Hyewon exposes Robin as a lesbian\n· Dia and Azrael have a cute liddol dance <3\n· Richard ghosts Ellie",
+                "· Charlie shows up high, but they find coke in her dorm\n· Vienna doesn’t speak up for any of them, leaves to be alone\nWinter Break\n· Charlie is under investigation by school authorities and the police, is almost expelled\n· Ellie swears off of ever seeing Richard again, dedicates her time to helping Charlie\n· Robin wants to help, but is in despair as she’s ridiculed by the students and staff while the management tells her to keep quiet about it\n· Dia and Azrael get closer trying to help Charlie\nSecond Sem\n· Charlie finds out that Harper Martinez snuck into the staff office after her music theory paper\n· Robin contemplates leaving Stellifer\n· Ellie and Richard reconcile, since apparently his father doesn’t approve of him being with her but he fought for them and got approval\n· Vienna sneaks around and finds Martinez dumping coke into the pond on school grounds\n· Charlie is proven innocent\n· Dia realizes she hasn’t paid attention to what her friends were going through, taking some space from Azrael to help Robin through\nThe Movement\n· To encourage queer acceptance at Stellifer, Vienna begins a movement in Robin’s name\n· The Principal quits :D since Richard’s father, the Chairman, fires him!!!!\n· They all live happily ever after\n\nEllie x Richard (Grumpy X Sunshine)",
+                "Robin’s situationship and queerness\nDia x Azrael (she fell first, he fell harder)\nCharlie gets framed?\nVienna starts a revolution thingy against the school authorities",
+                "Chapter One\nEvery student at Stellifer Girls’ Academy is reminded constantly of the legacy held by the women who have walked its halls since 1976; their names on the tongues of every girl who reads the engravings on the walls, used as passwords to dormitories, as study material, as examples of the standard they must live up to.\n\nFirst, there was the Class of ’77, known for their contribution to the beginning of an institution celebrated like Stellifer. Then, the Meringue Girls from the House of Leo (legend has it they snuck into the castle kitchen in senior year to bombard the House of Corvus with meringue cookies). There was Cynthia Mandel, the first graduate from Stellifer to win an Oscar (though, not the only one). There was Haein Lee, School Captain from ’88 to ’89 who became a tyrant in the eyes of the students and a savior in the eyes of the professors. Josephine Nguyen began the tradition of the Christmas Masquerade in 1994.\nAnd, of course, there were those five.\n\nWhile we’d earned many names, none of them really stuck 7 years into being a ‘sisterhood’. And so, we’re simply called ‘those five’.\n\n“Good god, Ro, you do not need to recite your lines at the top of your voice at 12 A.M.” Vienna sets out an exasperated groan, desperately scrawling words and numbers onto the parchment laid out on her desk. A dark mahogany, her hair seems to blend with the wood when she lays her head down, frustrated.\n\n“If I screw up this audition, Vie, my dream of playing Romeo will be over. Do you know how hard it has been convincing Joanne to finally, finally let us do this?” Robin’s coarse voice echoes through the room. Evidently unaware that some of us are making attempts to sleep, the two continue to bicker like usual.\n\nEleanor stirs in her sleep next to me, our beds so close that they may as well be joined at the hip. I reach out to my bedside table blindly, flicking the switch to turn on the lamp. “Hey, sorry for interrupting your duel, but I’ve got a really long day tomorrow. Could you do this in the morning?” I scowl.",
+                "“Wow, you too? It’s like you guys want me to lose the role to Carnegie.” As she begins her tantrum, Vie plugs in her earphones and continues to work on her lecture material. I turn over in bed, shut my lamp off, and hope for the best.\n\nArriving at an elite boarding school at the ripe age of 11, sent from the depths of New Jersey on a scholarship, Diana Malik was scared and nervous and anything in between. What would the rich girls say? Are they like those mean girls in the movies? Then, of course, Robin Miller stretched her hand out in an act of camaraderie, three other girls by her side.\n\nAt breakfast the following morning, Ro continued her caffeine-induced crusade against what Shakespeare’s enthusiasts would have considered socially acceptable in theatre. The rest of us, sprawled on our chairs, picked apart at some version of toast. Charlie liked hers with all the marmalade in the world, but Ellie ate it plain. Vienna has it with strawberry jam. I don’t fancy toast all too much, though it’s better with peanut butter.\n\n“I need you to read Benvolio.” Ro thrusts a script into my hands, still sticky from the food. “Aw, man. Whatever. Just read.” And so I do.\n\n“Be ruled by me. Forget to think of her.” I read from the text splayed in front of me, turning to face her as she continues. “Oh, teach me how I should forget to think!”\n\n“By giving liberty unto thine eyes. Examine other beauties.”\n“’Tis the way to call hers, exquisite, in question more. These happy masks that kiss fair ladies’ brows,\n Being black, puts us in mind they hide the fair.\n He that is strucken blind cannot forget\n The precious treasure of his eyesight lost.\n Show me a mistress that is passing fair;\n What doth her beauty serve but as a note\nWhere I may read who passed that passing fair?\n Farewell. Thou canst not teach me to forget.”",
+                "Robin finishes, earning a small applause from Charlie. “Don’t you sound like the man of the hour?” She sniggers, and I hand the stained script back to Ro, half-heartedly having attempted to wipe off the brown smear. “Aren’t I the man of the hour?” Robin pulls back her chair and plops herself onto it, slipping down into an awkward bend. “You two better show up to the audition,” she points at Charlie and me. “I’ll have your heads if you don’t. Can’t do much about these two prissy ladies, but at the very least, come watch.”\n\n“I’ll be there, yeah.” I take another bite out of the toast, flipping through ‘The Trial’ for the millionth time. It was much like Vienna and Eleanor to begin the school year with endless hours of work; Vienna would scramble from place to place to match her many commitments, and Ellie would shut herself in for days on end to finish her pieces. Charlie floated around a bit; she’d work when she felt like it. If something struck me, I had to work on it then and there. Ro did whatever she wanted. Ro always did whatever she wanted.\n\nThere’s a certain beauty in growing up surrounded by girls your age; girls who match your intellect, your ego, your imagination, and your vanity. People you can have a girlhood with. You fight, and you make up, and you fight again. When you live amongst these girls, there are times when you have to put your own struggles aside to comfort the girl who just got her heart broken; there are times when you have to forget your own bad grade to help the girl who needs a tutor. You come together for your common hatred of authority, you push each other apart for your common hatred of each other’s worst selves. And so, you give up on your own artistic pursuits to support a friend in need.\n\nThe audition itself was later in the afternoon, during prep time. Stellifer was vehemently particular about the hours the students put into their coursework. Classes began at 8 and ended at 3. Prep was from 4 to 7. No shocker was it that people who felt their daughters were put on Earth to cause trouble sent them here with the resolve to ‘cure’ them of rebelliousness.\n\nI pushed the heavy door to the auditorium open, finding a brightly illuminated, yet plain stage and an audience of some twenty students and teachers. Joanne, the Head of Theatrics was seated right up front with the rest of the department. A girl",
+                "on stage attempted Juliet. Students queued up next to the stairs, and I caught the stare of Robin. She smiled and waved. I smiled and gave her a thumbs up. In the crowd, Charlie waved at me, ushering me to sit with her.\n\n“Our champ is up next.” She splays out further on the chair in a manner that the O’Connoughans would find utterly distasteful. I take the chair by her side, crossing my legs and waiting for Joanne (fondly, Joasswipe) to call Robin up. When she does, Robin sprints to the stage and takes the center. “Of course, you’re here too.” Joanne groans loudly; her voice was thick enough on its own to reverberate even in the back.\n\n“Yes, yes. My name is Robin Miller, House of Leo, third year student. I’ll be auditioning for Romeo.” She blurts, almost intelligible in her speech. Joanne seems to catch it well enough, perhaps because she hates her enough to remember her name.\n\nAs Robin performs the part we rehearsed this morning, I imagine the scowl on Joanne’s face, alongside the bright smiles of the other teachers. Ro is a hit or miss; you love her, or you hate her, or you do both. When she’s done, there’s a small round of applause. She bows, and comes off stage to sit next to us. “Hey, tiger. Good job up there.” Charlie gives her a high five, snacking on chips, otherwise known as contraband.\n\n“Damn right, I was good. What’d you think, Dia?” She turns to me, sitting to my left. “You’re always good, Ro. You know it. Carnegie won’t get that role over you. And Joasswipe might hate you, but she knows nobody will do it better than you will.” I push her brown hair behind her ear, but it doesn’t hold. She cut it last year with kitchen scissors that Charlie snuck in, just to piss off her parents when she went home for Christmas.\n\nJoanne took the stage, finally, after what felt like hours of hearing the same few lines over and over again. God bless Shakespeare, but everything gets repetitive when it’s as cliché as Romeo and Juliet. “Good evening, students. Before I announce the decisions we’ve made as the Department of Theatrics, I would like to express how utterly disappointed I am with the second years for their lack of",
+                "improvement. The performing arts are no joke, and we certainly do not find your performances funny here at Stellifer. Last year, you were nobodies. This year, you are still nobodies. Dare you disgrace my name during the final production in front of the upper management, and I will have your heads on a pike.”\n\nCharlie snorts, choking on the chip in her mouth. Robin smiles, trying her level best not to let out a sound to avoid Joanne from hearing. She rolls her eyes and continues. “We’ll have Hyewon Jung playing Juliet, and Robin Miller playing Romeo-”\n\nCharlie lets out a loud whistle, and Robin and I watch in amusement as Joanne’s nostrils flare. “Maintain the sanctity of this auditorium or so help me God will I set it on fire with everyone inside. Pauline Keating will play Friar Lawrence, Sneha Sharma will play the Nurse, Magnolia Carnegie will play Tybalt, Wren Joseph will play Benvolio..” And as she went on with the list, Robin clutches my hand so tight her knuckles pale. “Told you so.” I whisper, a smile on our faces.",
+                "Chapter Two\nVienna is pacing again. It’s not out of the ordinary to watch her pace in the dorm, especially since it’s rather spacious in spite of the desk sets and the beds. She needs to walk a lot, even though she claims otherwise, and when she can’t walk she needs to move in one way or another. It wasn’t a surprise to anyone when she came back to school in third year with a brand new diagnosis of anxiety and a bottle of pills.\n“I hope you know you can tell me what’s wrong?” I look to inform her. She ignores me outright, heading straight to her desk and the myriad papers sprawled out over it. “Vie, you can’t ignore me forever,” I stand up and walk to her. “Would you please just tell me why you’re walking around like you’re Napoleon and there’s nothing left to do?”\n“You think this is funny, Dia?” She deadpans. I smile. “No, which is why I’m asking you what’s wrong. Was that wrong of me to do, darling?”"
+            ], // Book 1
+        ["Siren\nyour original poetry", "one day you're thirteen\nand your mother sits you down\nand she warns you of\nthe claws of love\nlike the anchor of a ship\nsailing to a future unknown\nshould it go?\nshould it stay?\nthe scars on its side\nthe stains of old blood\nthe rust\nthe rust\nthe rust"],              // Book 2
+        [
+            "Beneath Skin and Bones\nyour original poetry",   "your name is carved on my bones\nif eve was made of\nadam's rib pulled out then\nyou're all over mine and\nmy veins twist as though\nlacking yours beside them\nwhen you pull them out\nthey lay intricately to\nform the shape of your smile\nand the spark in your eyes\nlike the flame in my stomach\nthe carnal urge to love\nto live\nis to love\nand i feel so much of you\nin my heart and my nerves and\nin my core and in my\nsoul\ni feel so much of you\nthat i don't feel much at all\ni don't feel much but the need\nto turn around\nand see if you're still there\nby my side"
+            ],
+        [
+            "Something you wrote for me\nyour original poetry",  "Envy consumes me entirely. \nIt rushes through my veins, \nThrough the dirtiest drops of my blood. \nIt sparks its fire and adds its fuel;\nIt dries my heart up whole. \n\nNothing has ever made me so envious as the stars that put you to rest at night. \nNothing has ever filled me with so much rage as the sunlight that kisses your golden brown skin awake. \nThe time that moves with you, every passing second. \nThe grass you lay your worries out on. \n\nDoes the sun wish it were closer to the moon, no matter how far its orbit kept them? \n\nMy envy is a fault that rocks my faith in fate to my core. \n\nWho is fate if not the sickening feeling of knowing you shed your tears in my absence? \n\nWho is fate if not the egregious doom of not having you in my arms; knees against knees, hands in hands? \n\nMy envy is not my envy. \nIt is my pain. \nIt is my rage. \nIt is my love."
+            ],
+        [
+                "on the eve of adulthood", "I turned 17 in August. I grew up watching tons of chick-flicks on Romedy Now... In the movies, being 16 is a magical thing— when you get your first boyfriend and your first kiss and people start to take you seriously. And, believe me, when I turned 16, it did feel that way.\nBut I didn’t know jackshit about what it meant to turn 17.",
+                "With senior year comes a sense of existential dread that this is your last everything... Among the exam pressure came a nostalgic melancholy. I’d only just learnt what nostalgia even meant!\nThese thoughts begin to take over every action of yours in this last year— for good, of course. Throughout my first 11 years of school, I always tried to do the ‘right’ thing... I guess I decided to let loose(r) this year. What’s fun without a little harmless rule-breaking?",
+                "When you know this is your last, you go all in. I finally went on my school trip... It reminded me just how much I should be valuing my friendships, new and old... Most importantly, I think I found a bit more of each of my relationships in those 4 days.\nThe worst part of the eve of adulthood is the fear of the unknown. At least once a week, my friends and I have reminded each other in some variation of, 'This is the last year we get to do this together.'",
+                "I’m the kind of person whose personality isn’t just her own— it’s the amalgamation of the books on her shelves... I truly have a piece of everyone I’ve ever loved in me… which makes the idea of never seeing these people again unsettling.\nThe fear of the unknown is less a fear and more a realization... Now all our conversations steer inevitably to the future. I hope things work out for them, but I can’t help but worry about the fact that these friendships aren’t going to follow me through college.",
+                "With being 17 comes responsibility.\nA month ago, I submitted my first college application... Turning 17 made me realize that reality wasn’t all that similar to the aspirations and dreams I had... Whether AI will take over my livelihood for Sam Altman’s shareholder value... To put it simply, 17 is when shit starts to get real. And really, really daunting.\nAt 17, I feel like I’m the senior citizen among high schoolers... 17 means change and responsibility, but it’s change I want to see and responsibility I want to take up.\nOn the eve of adulthood, I’m not afraid of what is to come."
+            ],
+            [
+            "what instagram doesn't understand about Zindagi Na Milegi Dobara (2011)", "There are few self-proclaimed cinephiles in India who haven’t watched Zindagi Na Milegi Dobara (2011). Its stunning visuals, loveable characters and the sense of lust for life it invokes are features that have solidified its place in the halls of fame of Bollywood history.\nBut there are also concerns that echo among people on Instagram, particularly surrounding the plot. I have heard endless discourse with the same sentiment— 'Natasha was right! Kabir was an embarrassing man-child, and her actions were justified.' It truly makes me wonder if media literacy today is in such an egregious state that this is all that people could derive from this gem of a movie.",
+                "The movie explores a wide variety of themes that fall under similar umbrellas; love for life, friendship, living in the moment, relationships, marriage and fear. The moral of Natasha and Kabir’s story that people miss is that it was a clear reflection of why relationships in the real world don’t work out— because people want different things.\nNatasha is controlling, while Kabir is incredibly non-confrontational, setting the stage for miscommunication with such effortlessness! While Natasha seems to have trust in Kabir at first, this trust fades into anxiety and envy once she begins suspecting that her friends were right.",
+                "Kabir’s lack of will to confront Natasha and stand up for himself poisoned the relationship when he dragged himself into an engagement because he wanted to make her happy. Natasha’s bossy nature driven by her fear of losing Kabir reinforces the belief that this will continue after marriage.\nThe simple truth is that in relationships, people want different things. Natasha’s take on marriage assumed that your life exists as a hierarchy. Kabir sees life as a mindmap; marriage exists on the map, but it’s not the centre. That doesn’t make him an 'emotionally cheating man-child' or her a 'bossy control freak'.",
+                "The movie acknowledges this in the end-credits music video, where Kabir and Natasha are shown to have gone their separate ways—and they’re both happy. It puts up a strong argument for the case that had things not turned out the way they did, their relationship would crash and burn far more miserably.\nOne of my favorite set of scenes in Bollywood of all-time are the underwater diving scenes. Sharing the same device to breathe is inherently something that builds tension, but to explore the marvels of life together underwater, hand-in-hand— that is a whole other level of romance.",
+                "This scene is pivotal for Arjun’s character— a man whose sole purpose for spending the rest of his life was slaving away for his retirement fund. The diving scene slows his life down, and his character development by the end of the movie is unmistakable.\nThen there’s Imran. Imran is known mostly for embodying exactly what the movie preaches— Carpe Diem. But beneath that lies an emotionally sensitive man who’s just trying to find the reason why his father left. The arc between Imran and his biological father is a story of abandonment and revelations.",
+                "Salman, his father, just didn't want kids. Rahila, Imran’s mother, did— so he left. This harsh reality leaves Imran in tears, but he realizes this really was for the best. The fact that Salman didn’t feel the void of parenthood stung, but it meant more than a meaningless apology.\nOn a side note, the cinematography for this movie is stunning. The vibrant contrast sets the tone for a satisfying, happy conclusion. This doesn’t even scratch the surface of what I could say about this movie, but here’s to understanding media better than our skewed ideals of relationships."
+            ],
+            [
+            "Is it just me, or are we regressing?", "Not a day goes by anymore on social media spaces without at least a singular sighting of phrases like 'girl math' or women joking about being incapable of financial autonomy. Is this some sort of an integer situation? You get too 'woke' and the negatives multiply to give you a newfound sense of conservatism and recrudescence of gender roles and stereotypes?",
+                "I’d argue that the first mainstream appearances of these notions began when people started 'touching grass' in 2022. While one end of the spectrum propagated misogynist ideas to teenage boys, the other catered to women who wished to find new ways of reinventing themselves by handing their autonomy right over. It’s easy to give in to the patriarchy when society upholds the image of a woman who is everything all at once.",
+                "The ideal woman is promiscuous, but never too much. She’s free and likes dressing up, but her ultimate goal is to marry a man she loves and grow old in a house. She’s a 'feminist' in the way everyone’s a 'feminist'—believing in equality, just not THAT equal. By embracing your 'divine feminine,' you give into your 'inherently feminine' traits, embracing your position as a caregiver and encouraging the idea that a man must provide for you.",
+                "This marketing is dangerous for impressionable women. These influencers exhort others to give up their 'masculine energy' jobs and degrees to find a man to marry, often ignoring the privilege of their own race and socioeconomic background. If you go deeper down the iceberg, you find multiple trends that belittle the intellect of women to make them more romantically or socially attractive, often packaged as jokes.",
+                "Take 'girl math'—it’s funny, so it slides, but it feeds into the trope that women don’t understand interest, cost, or percentages. Then there is the dangerous incongruence in consent: a 'no' to an unattractive man is respected, while a 'no' to an attractive one is treated as 'playing hard to get.' Worst of all is the trend of women deliberately dumbing themselves down to uplift their partners, equating incompetence with gender-specific femininity.",
+                "To depict your lack of willingness to be responsible for yourself as the opposite of 'manliness' is a problem. The issue is centering men and the intellectual and physical superiority of masculinity over femininity. Femininity does not have to be nurturing; it can be fierce, intelligent, and strong. Femininity as a concept itself can even be rejected. Femininity is simply what women decide to do with it."
+            ],
+            [
+                "you're really fucking ugly", "By the time I was 8 or 9, I weighed some 55 kilograms. Surrounded by girls who weighed barely half that, I felt there was no duckling as ugly as I was. From refusing to go on a zip-line to hating my untamed curls and rectangular glasses, my perceived weight and appearance followed me like a shadow. It worsened as I entered my teens and began consuming Western pop culture and K-Pop, where all I saw were girls with 24-inch waists and flawless faces.",
+                "I tried to match those standards—heat-damaging my hair with blowouts, losing weight through dance challenges, and relying on filters. Today, I am still fat, and I wouldn’t call myself conventionally pretty. But the best part is that it doesn’t fucking matter. I still track calories and use makeup, but my motivation has shifted. I want to build muscle to be stronger and more athletic. I want my hair to look good in its natural waves, not forced into a daily change.",
+                "I remain a firm critic of the 'choice feminist' narrative. While we claim these beauty practices are just for us, they do not exist in a vacuum, exclusionary of societal beauty standards or the sexual desires of men. It is important to acknowledge the origins of these practices, even if we do not abandon them entirely.",
+                "So what if you’re an ugly woman with a wide nose, frizzy hair, and a body that doesn't fit the mold? Perhaps fewer men will be attracted to you, or you’ll face the unsolicited advice of a mausi asking 'Konsa ladka tumse shaadi karega?' (Which boy will marry you?). The simple answer to all of that is a singular middle finger.",
+                "So yes. You’re really fucking ugly. So are your parents, your friends, and your neighbors. Not your dog, though. And it truly doesn't matter."
+            ],
+            ["You be so pretty"]
+    ];
+    </script>
+    </body>
+    </html>
